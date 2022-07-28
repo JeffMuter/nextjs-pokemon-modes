@@ -51,7 +51,7 @@ export default function Details() {
           <div className={styles.name}>{pokemon.name}</div>
           <div className={styles.type}>{pokemon.type.join(", ")}</div>
           <table>
-            <thead classname={styles.header}>
+            <thead className={styles.header}>
               <tr>
                 <th>Name</th>
                 <th>Value</th>
