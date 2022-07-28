@@ -6,29 +6,32 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "../../styles/Details.module.css";
 
-export default function Details() {
-  const {
-    query: { id },
-  } = useRouter();
+export async function getStaticPaths() {
+  const resp = await fetch(
+    "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
+  );
+  const pokemon = await resp.json();
 
-  const [pokemon, setPokemon] = useState(null);
+  return {
+    paths: pokemon.map((pokemon) => ({
+      params: { id: pokemon.id.toString() },
+    })),
+    fallback: false,
+  };
+}
 
-  useEffect(() => {
-    async function getPokemon() {
-      const resp = await fetch(
-        `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`
-      );
-      setPokemon(await resp.json());
-    }
-    if (id) {
-      getPokemon();
-    }
-  }, [id]);
+export async function getStaticProps({ params }) {
+  const resp = await fetch(
+    `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
+  );
+  return {
+    props: {
+      pokemon: await resp.json(),
+    },
+  };
+}
 
-  if (!pokemon) {
-    return null;
-  }
-
+export default function Details({ pokemon }) {
   return (
     <div>
       <Head>
